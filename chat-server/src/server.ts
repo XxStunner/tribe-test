@@ -7,6 +7,17 @@ const config:ApplicationConfig = configJson;
 const app = express();
 const server = http.createServer(app);
 
-server.listen(3000, () => {
+const io = require('socket.io')(server);
+
+io.on('connection', (socket:any) => {
+    console.log(socket);
+
+    socket.on('disconnect', () => {
+        console.log("user disconnected");
+
+    });
+});
+
+server.listen(config.port, () => {
     console.log(`Listening on port: ${config.port}`);
 });
