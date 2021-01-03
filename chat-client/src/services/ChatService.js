@@ -14,7 +14,7 @@ export default {
         this.socket = socketIoClient('http://localhost:5000');
 
         this.socket.on('connect', () => {
-            console.log("user connected to chat");
+            console.log("user connected to server");
         });
 
         this.socket.emit('addUserToChat', userName);
@@ -25,7 +25,7 @@ export default {
     sendMessage: function(messageBody) {
         this.socket.emit('sendMessage', {
             userName: this.userName,
-            messageBody: messageBody,
+            body: messageBody,
             location: this.userLocation
         })
     },
