@@ -1,77 +1,65 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Message from '../Message/Message';
-import ChatService from '../../services/ChatService';
+import chatService from '../../services/ChatService';
 import './Chat.css';
 
 export default function Chat({ userName, userLocation }) {
     const [userMessage, setUserMessage] = useState("");
-    const messageRanges = [
-        [
-            {
-                id: 4,
-                userName: 'Victor',
-                body: 'Testing1',
-                opacity: 1
-            },
-            {
-                id: 5,
-                userName: 'Victor',
-                body: 'Testing2',
-                opacity: 1
-            },
-        ],
-        [
-            {
-                id: 6,
-                userName: 'Tomás',
-                body: 'Testing1',
-                opacity: .75
-            },
-            {
-                id: 7,
-                userName: 'Tomás',
-                body: 'Testing2',
-                opacity: .75
-            },
-        ],
-        [
-            {
-                id: 8,
-                userName: 'Zé Johnson',
-                body: 'Testing1',
-                opacity: .5
-            },
-            {
-                id: 9,
-                userName: 'Zé Johnson',
-                body: 'Testing2',
-                opacity: .5
-            }
-        ],
-        [
-            {
-                id: 10,
-                userName: 'Charlie Johnson',
-                body: 'Testing1',
-                opacity: .25
-            },
-            {
-                id: 11,
-                userName: 'Charlie Johnson',
-                body: 'Testing2',
-                opacity: .25
-            }
-        ]
-    ];
-
-    useEffect(() => {
-        ChatService.connectUser(userName, userLocation);
-    }, [userName, userLocation]);
+    const [messageRanges, setMessageRanges] = useState([
+        {
+            maximumDistance: 250,
+            opacity: 1,
+            messages: []
+        },
+        {
+            maximumDistance: 500,
+            opacity: .5,
+            messages: []
+        },
+        {
+            maximumDistance: 1000,
+            opacity: .25,
+            messages: []
+        },
+        {
+            maximumDistance: 2000,
+            opacity: 0,
+            messages: []
+        },
+    ]);
     
     const sendMessage = (e) => {
         e.preventDefault();
-        console.log("sending message");
+        chatService.sendMessage(userMessage);
+        setUserMessage('');
     }
+
+    const handleMessageCb = useCallback((message) => {
+        setMessageRanges(messageRanges => {
+            const messageRangesCopy = [...messageRanges];
+            const messageRangeIndex = messageRangesCopy.findIndex(messageRange => messageRange.maximumDistance > message.distance);
+
+            messageRangesCopy[messageRangeIndex] = {
+                ...messageRangesCopy[messageRangeIndex],
+                messages: [{
+                    ...message,
+                    opacity: messageRangesCopy[messageRangeIndex].opacity
+                }, ...messageRangesCopy[messageRangeIndex].messages].slice(0, 5)
+            };
+
+            return messageRangesCopy;
+        });
+    }, []);
+
+    useEffect(() => {
+        if(userName && userLocation.lat !== 0 && userLocation.lng !== 0) {
+            chatService.connectUser(userName, userLocation);
+        }
+    }, [userName, userLocation]);
+
+    useEffect(() => {
+        chatService.subscribeToChatMessages(handleMessageCb);
+    }, [handleMessageCb]);
 
 	return (
         <div className="chat-w">
@@ -82,9 +70,9 @@ export default function Chat({ userName, userLocation }) {
                 <div className="chat-header-username">Welcome, {userName}</div>
             </div>
             <div className="chat-messages">
-                {messageRanges.map((messages, rangeIndex) => (
+                {messageRanges.map((messageRange, rangeIndex) => (
                     <div key={rangeIndex} className="chat-messages-col">
-                        {messages.map(message => <Message key={message.id} message={message} />)}
+                        {messageRange.messages.map(message => <Message key={message.id} message={message} />)}
                     </div>
                 ))}
             </div>

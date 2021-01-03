@@ -24,6 +24,8 @@ io.on('connection', (socket:any) => {
     });
 
     socket.on('sendMessage', (message:IMessageEntry) => {
+        console.log(`Received a message`, message);
+        
         const messageResponse:IMessage = { ...message, id: messages.length + 1};
 
         messages.push(messageResponse);

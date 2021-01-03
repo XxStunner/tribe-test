@@ -6,7 +6,7 @@ export default function Login({ loginCb }) {
 
 	const handleSuccessOnGetCurrentPosition = (position) => {
 		loginCb({
-			userName: userName,
+			name: userName,
 			location: {
 				lat: position.coords.latitude,
 				lng: position.coords.longitude

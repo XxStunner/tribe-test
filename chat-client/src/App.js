@@ -9,11 +9,16 @@ export default function App() {
 		lng: 0
 	});
 
+	const updateUserInfo = (user) => {
+		setUserName(user.name);
+		setUserLocation(user.location);
+	}
+
 	return (
 		<>
 			{userName 
 				? <Chat userName={userName} userLocation={userLocation} />
-				: <Login loginCb={(user) => setUserName(user.userName) && setUserLocation(user.userLocation)} />}
+				: <Login loginCb={updateUserInfo} />}
 		</>
 	);
 }
