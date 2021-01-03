@@ -1,0 +1,33 @@
+.chat-w {
+	background: #cecece;
+	height: 100vh;
+	width: 100%;
+}
+
+.chat-header {
+	align-items: center;
+	background: white;
+	display: flex;
+	padding: 20px;
+	justify-content: space-between;
+}
+
+.chat-header-logo img {
+	display: flex;
+	height: 36px;
+	width: 36px;
+}
+
+.chat-header-username {
+	display: flex;
+	color: purple;
+}
+
+.chat-input-w {
+	background: white;
+	display: flex;
+}
+
+.chat-input-w input {
+	width: 100%;
+}

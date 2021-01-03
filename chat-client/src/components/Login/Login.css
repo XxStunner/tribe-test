@@ -1,0 +1,32 @@
+.chat-login {
+    align-items: center;
+    background: white;
+    color: #8d67dd;
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    width: 100%;
+}
+
+.chat-login form {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-login-h {
+    align-items: center;
+    flex-direction: column;
+}
+
+.chat-login-h,
+.chat-login-h img {
+    height: 128px;
+    width: 128px;
+    margin: 0 0 20px 0;
+}
+
+.chat-login-h,
+.chat-login-f {
+    width: 100%;
+    display: flex;
+}
