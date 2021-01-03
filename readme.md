@@ -17,10 +17,10 @@ Requirements:
 
 ## Steps to run
 
-In order to run the application it's needed to install the typescript globally, so execute this command:
+In order to run the application it's needed to install the typescript and nodemon globally, so execute this command:
 
 ```bash
-npm install -g typescript
+npm install -g typescript nodemon
 ```
 
 Also run on chat-server and chat-client folders:

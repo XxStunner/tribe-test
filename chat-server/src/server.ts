@@ -3,7 +3,7 @@ import http from 'http';
 import configJson from './config/application.json';
 import IApplicationConfig from './interfaces/IApplicationConfig';
 import IMessageEntry from './interfaces/IMessageEntry';
-import IMessage from './interfaces/Imessage';
+import IMessage from './interfaces/IMessage';
 import IUser from './interfaces/IUser';
 
 const config:IApplicationConfig = configJson;

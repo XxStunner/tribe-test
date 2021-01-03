@@ -1,5 +1,5 @@
 import ILocation from "./ILocation";
-import IMessage from "./Imessage";
+import IMessage from "./IMessage";
 
 export default interface IUser {
     id?: number,
