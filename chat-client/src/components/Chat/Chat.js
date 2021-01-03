@@ -79,7 +79,7 @@ export default function Chat({ userName }) {
             <div className="chat-messages">
                 {messageRanges.map((messages, rangeIndex) => (
                     <div key={rangeIndex} className="chat-messages-col">
-                        {messages.map(message => <Message key={message.id} userName={message.userName} messageBody={message.body} />)}
+                        {messages.map(message => <Message key={message.id} message={message} />)}
                     </div>
                 ))}
             </div>
