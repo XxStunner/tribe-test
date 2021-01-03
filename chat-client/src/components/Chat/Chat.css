@@ -10,8 +10,9 @@
 	align-items: center;
 	background: white;
 	display: flex;
-	padding: 20px;
 	justify-content: space-between;
+	padding: 20px;
+	text-align: center;
 }
 
 .chat-header-logo img {
@@ -26,7 +27,13 @@
 }
 
 .chat-messages {
+	display: flex;
 	height: 100%;
+	overflow: auto;
+}
+
+.chat-messages-col {
+	width: 25%;
 }
 
 .chat-input-w {

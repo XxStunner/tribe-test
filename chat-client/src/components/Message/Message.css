@@ -1,0 +1,27 @@
+.message-avatar img {
+    border-radius: 50%;
+    height: 36px;
+    margin: 0 0 10px 0;
+    object-fit: contain;
+    width: 36px;
+}
+
+.message-w {
+    display: flex;
+    padding: 20px;
+}
+
+.message-avatar {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    width: 60px;
+}
+
+.message-body {
+    background: white;
+    border-radius: 8px;
+    height: 100%;
+    padding: 10px;  
+}
