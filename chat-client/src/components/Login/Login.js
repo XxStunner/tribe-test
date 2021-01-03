@@ -35,7 +35,7 @@ export default function Login({ loginCb }) {
 					<h2>Type your name to enter the chat:</h2>
 				</div>
 				<div className="chat-login-f">
-					<input value={userName} type="text" onChange={e => setUserName(e.target.value)}></input>
+					<input value={userName} type="text" onChange={e => setUserName(e.target.value)} minLength="3"></input>
 					<button type="submit">Enter</button>
 				</div>
 			</form>

@@ -1,5 +1,14 @@
 import socketIoClient from 'socket.io-client';
 
+const calculateEuclideanDT = (from, to) => {
+    const lngDiff = (from.lng - to.lng);
+    const latDiff = (from.lat - to.lat);
+
+    return Math.sqrt(
+        lngDiff * lngDiff + latDiff + latDiff  
+    ) * 111.12;
+}
+
 const chatService = {
     userName: '',
     userLocation: {
@@ -7,7 +16,8 @@ const chatService = {
         lng: 0
     },
     socket: null,
-    messagesCb: null, 
+    messagesCb: null,
+    usersCb: null,
     connectUser: function(userName, userLocation) {
         this.userName = userName;
         this.userLocation = userLocation;
@@ -25,20 +35,28 @@ const chatService = {
 
         this.socket.on('newChatMessage', (message) => {
             if(this.messagesCb) {
-                const lngDiff = (this.userLocation.lng - message.location.lng);
-                const latDiff = (this.userLocation.lat - message.location.lat);
-            
-                message.distance = Math.sqrt(
-                    lngDiff * lngDiff + latDiff + latDiff  
-                ) * 111.12;
-                
+                message.distance = calculateEuclideanDT(this.userLocation, message.location);
                 this.messagesCb(message);
+            }
+        });
+
+        this.socket.on('updateUsersList', (users) => {
+            if(this.usersCb) {
+                this.usersCb(users.map(user => {
+                    user.distance = calculateEuclideanDT(this.userLocation, user.location);
+                    return user;
+                }));
             }
         });
     },
     subscribeToChatMessages: function(subscribeCb) {
         if(!this.messagesCb) {
             this.messagesCb = subscribeCb;
+        }
+    },
+    subscribeToChatUsersChange: function(subscribeCb) {
+        if(!this.usersCb) {
+            this.usersCb = subscribeCb;            
         }
     },
     sendMessage: function(messageBody) {

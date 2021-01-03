@@ -16,25 +16,42 @@ const io = require('socket.io')(server, {
     }
 });
 
+let users:IUser[] = [];
 const messages:IMessage[] = [];
 
 io.on('connection', (socket:any) => {
+    let userId = 0;
+    let userIndex = 0;
+
     socket.on('addUserToChat', (user:IUser) => {
         console.log(`${user.name} connected to the chat`);
+        userId = users.length + 1;
+
+        user.id = userId;
+        
+        userIndex = userId - 1;
+
+        users[userIndex] = user;
+
+        io.emit('updateUsersList', users);
     });
 
     socket.on('sendMessage', (message:IMessageEntry) => {
-        console.log(`Received a message`, message);
+        const messageResponse:IMessage = { ...message, id: messages.length + 1, userId: userId};
         
-        const messageResponse:IMessage = { ...message, id: messages.length + 1};
+        console.log(`Registered a message`, messageResponse);
 
-        messages.push(messageResponse);
+        users[userIndex].message = messageResponse;
 
         io.emit('newChatMessage', messageResponse)
     });
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
+
+        users = users.filter(user => user.id !== userId);
+
+        io.emit('updateUsersList', users);
     });
 });
 

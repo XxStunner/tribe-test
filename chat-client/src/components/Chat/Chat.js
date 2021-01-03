@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import Message from '../Message/Message';
+import User from '../User/User';
 import chatService from '../../services/ChatService';
 import './Chat.css';
 
@@ -9,22 +9,22 @@ export default function Chat({ userName, userLocation }) {
         {
             maximumDistance: 250,
             opacity: 1,
-            messages: []
+            users: []
         },
         {
             maximumDistance: 500,
             opacity: .5,
-            messages: []
+            users: []
         },
         {
             maximumDistance: 1000,
             opacity: .25,
-            messages: []
+            users: []
         },
         {
             maximumDistance: 2000,
             opacity: 0,
-            messages: []
+            users: []
         },
     ]);
     
@@ -38,14 +38,35 @@ export default function Chat({ userName, userLocation }) {
         setMessageRanges(messageRanges => {
             const messageRangesCopy = [...messageRanges];
             const messageRangeIndex = messageRangesCopy.findIndex(messageRange => messageRange.maximumDistance > message.distance);
+            const userIndex = messageRangesCopy[messageRangeIndex].users.findIndex(u => u.id === message.userId);
+            const users = [...messageRangesCopy[messageRangeIndex].users];
+            
+            users[userIndex].message = message;
 
             messageRangesCopy[messageRangeIndex] = {
                 ...messageRangesCopy[messageRangeIndex],
-                messages: [{
-                    ...message,
-                    opacity: messageRangesCopy[messageRangeIndex].opacity
-                }, ...messageRangesCopy[messageRangeIndex].messages].slice(0, 5)
+                users: users
             };
+
+            return messageRangesCopy;
+        });
+    }, []);
+
+    const handleUserEnteringChat = useCallback((users) => {
+        setMessageRanges(messageRanges => {
+            const messageRangesCopy = [...messageRanges];
+
+            users.forEach(user => {
+                const messageRangeIndex = messageRangesCopy.findIndex(messageRange => messageRange.maximumDistance > user.distance);
+                
+                messageRangesCopy[messageRangeIndex] = {
+                    ...messageRangesCopy[messageRangeIndex],
+                    users: [{
+                        ...user,
+                        opacity: messageRangesCopy[messageRangeIndex].opacity,
+                    }, ...messageRangesCopy[messageRangeIndex].users].slice(0, 5)
+                };
+            });
 
             return messageRangesCopy;
         });
@@ -61,6 +82,10 @@ export default function Chat({ userName, userLocation }) {
         chatService.subscribeToChatMessages(handleMessageCb);
     }, [handleMessageCb]);
 
+    useEffect(() => {
+        chatService.subscribeToChatUsersChange(handleUserEnteringChat);
+    }, [handleUserEnteringChat]);
+
 	return (
         <div className="chat-w">
             <div className="chat-header">
@@ -72,12 +97,12 @@ export default function Chat({ userName, userLocation }) {
             <div className="chat-messages">
                 {messageRanges.map((messageRange, rangeIndex) => (
                     <div key={rangeIndex} className="chat-messages-col">
-                        {messageRange.messages.map(message => <Message key={message.id} message={message} />)}
+                        {messageRange.users.map(user => <User key={user.id} user={user} />)}
                     </div>
                 ))}
             </div>
             <form onSubmit={sendMessage} className="chat-input-w">
-                <input value={userMessage} type="text" onChange={e => setUserMessage(e.target.value)}></input>
+                <input value={userMessage} type="text" onChange={e => setUserMessage(e.target.value)} minLength="3"></input>
                 <button type="submit">Send</button>	
             </form>
         </div>
