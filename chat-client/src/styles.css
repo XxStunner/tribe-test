@@ -7,7 +7,8 @@ body {
 input {
     border: 2px solid #9877e0 !important;
     border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	width: 100%;
 }
 
 button {

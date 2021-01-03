@@ -14,8 +14,8 @@ export default function Login({ loginCb }) {
 		<div className="chat-login">
 			<form onSubmit={logInHandler}>
 				<div className="chat-login-h">
-					<img src="./images/tribe.jpg"></img>
-					<label>Type your name to enter the chat:</label>
+					<img src="./images/tribe.jpg" alt="Tribe"></img>
+					<h2>Type your name to enter the chat:</h2>
 				</div>
 				<div className="chat-login-f">
 					<input value={userName} type="text" onChange={e => setUserName(e.target.value)}></input>

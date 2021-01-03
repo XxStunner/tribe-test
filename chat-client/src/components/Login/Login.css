@@ -18,11 +18,9 @@
     flex-direction: column;
 }
 
-.chat-login-h,
-.chat-login-h img {
+.chat-login-h > img {
     height: 128px;
     width: 128px;
-    margin: 0 0 20px 0;
 }
 
 .chat-login-h,

@@ -13,7 +13,7 @@ export default function Chat({ userName }) {
         <div className="chat-w">
             <div className="chat-header">
                 <div className="chat-header-logo">
-                    <img src="./images/tribe.jpg"></img>
+                    <img src="./images/tribe.jpg" alt="Tribe"></img>
                 </div>
                 <div className="chat-header-username">Welcome, {userName}</div>
             </div>

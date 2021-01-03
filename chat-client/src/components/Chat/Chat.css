@@ -1,5 +1,7 @@
 .chat-w {
 	background: #cecece;
+	display: flex;
+	flex-direction: column;
 	height: 100vh;
 	width: 100%;
 }
@@ -23,11 +25,12 @@
 	color: purple;
 }
 
+.chat-messages {
+	height: 100%;
+}
+
 .chat-input-w {
 	background: white;
 	display: flex;
-}
-
-.chat-input-w input {
-	width: 100%;
+	padding: 10px;
 }
