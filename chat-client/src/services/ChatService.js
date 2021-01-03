@@ -22,7 +22,7 @@ const chatService = {
         this.userName = userName;
         this.userLocation = userLocation;
 
-        this.socket = socketIoClient('http://localhost:5000');
+        this.socket = socketIoClient('http://104.236.22.221:5000');
 
         this.socket.on('connect', () => {
             console.log("user connected to server");
