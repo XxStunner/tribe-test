@@ -7,13 +7,16 @@ const config:ApplicationConfig = configJson;
 const app = express();
 const server = http.createServer(app);
 
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+    cors: {
+        origin: config.corsOrigin,
+    }
+});
 
 io.on('connection', (socket:any) => {
-    console.log(socket);
-
+    console.log('user connected');
     socket.on('disconnect', () => {
-        console.log("user disconnected");
+        console.log('user disconnected');
 
     });
 });

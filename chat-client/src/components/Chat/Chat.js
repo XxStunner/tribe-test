@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Message from '../Message/Message';
+import ChatService from '../../services/ChatService';
 import './Chat.css';
 
-export default function Chat({ userName }) {
+export default function Chat({ userName, userLocation }) {
     const [userMessage, setUserMessage] = useState("");
     const messageRanges = [
         [
@@ -62,6 +63,10 @@ export default function Chat({ userName }) {
             }
         ]
     ];
+
+    useEffect(() => {
+        ChatService.connectUser(userName, userLocation);
+    }, [userName, userLocation]);
     
     const sendMessage = (e) => {
         e.preventDefault();

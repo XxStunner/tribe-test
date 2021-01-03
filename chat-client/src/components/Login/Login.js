@@ -4,10 +4,27 @@ import './Login.css';
 export default function Login({ loginCb }) {
 	const [userName, setUserName] = useState("");
 
+	const handleSuccessOnGetCurrentPosition = (position) => {
+		loginCb({
+			userName: userName,
+			location: {
+				lat: position.coords.latitude,
+				lng: position.coords.longitude
+			}
+		})
+	}
+
+	const handleErrorOnGetCurrentPosition = () => {
+		alert('Your position in needed in order to use the chat, refresh the page and try again');
+	}
+
 	const logInHandler = (e) => {
 		e.preventDefault();
-        console.log("log in");
-        loginCb(userName);
+		if(navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(handleSuccessOnGetCurrentPosition, handleErrorOnGetCurrentPosition)
+		} else {
+			alert('You need to use a browser with geolocation support, try chrome, opera or firefox');
+		}
 	}
 
 	return (
