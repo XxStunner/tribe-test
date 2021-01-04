@@ -73,7 +73,7 @@ export default function Chat({ userName, userLocation }) {
                     users: [{
                         ...user,
                         opacity: messageRangesCopy[messageRangeIndex].opacity,
-                    }, ...messageRangesCopy[messageRangeIndex].users].slice(0, 5)
+                    }, ...messageRangesCopy[messageRangeIndex].users.filter(u => u.id !== user.id)].slice(0, 5)
                 };
             });
 
