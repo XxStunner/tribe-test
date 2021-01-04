@@ -55,6 +55,6 @@ io.on('connection', (socket:any) => {
     });
 });
 
-server.listen(config.port, () => {
-    console.log(`Listening on port: ${config.port}`);
+server.listen(process.env.PORT || config.port, () => {
+    console.log(`Listening on port: ${process.env.PORT || config.port}`);
 });
