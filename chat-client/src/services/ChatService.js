@@ -21,33 +21,35 @@ const chatService = {
     connectUser: function(userName, userLocation) {
         this.userName = userName;
         this.userLocation = userLocation;
-
-        this.socket = socketIoClient('https://floating-headland-00562.herokuapp.com');
-
-        this.socket.on('connect', () => {
-            console.log("user connected to server");
-        });
-
-        this.socket.emit('addUserToChat', {
-            name: this.userName,
-            location: this.userLocation
-        });
-
-        this.socket.on('newChatMessage', (message) => {
-            if(this.messagesCb) {
-                message.distance = calculateEuclideanDT(this.userLocation, message.location);
-                this.messagesCb(message);
-            }
-        });
-
-        this.socket.on('updateUsersList', (users) => {
-            if(this.usersCb) {
-                this.usersCb(users.map(user => {
-                    user.distance = calculateEuclideanDT(this.userLocation, user.location);
-                    return user;
-                }));
-            }
-        });
+        
+        if(!this.socket) {
+            this.socket = socketIoClient('https://floating-headland-00562.herokuapp.com');
+    
+            this.socket.on('connect', () => {
+                console.log("user connected to server");
+            });
+    
+            this.socket.emit('addUserToChat', {
+                name: this.userName,
+                location: this.userLocation
+            });
+    
+            this.socket.on('newChatMessage', (message) => {
+                if(this.messagesCb) {
+                    message.distance = calculateEuclideanDT(this.userLocation, message.location);
+                    this.messagesCb(message);
+                }
+            });
+    
+            this.socket.on('updateUsersList', (users) => {
+                if(this.usersCb) {
+                    this.usersCb(users.map(user => {
+                        user.distance = calculateEuclideanDT(this.userLocation, user.location);
+                        return user;
+                    }));
+                }
+            });
+        }
     },
     subscribeToChatMessages: function(subscribeCb) {
         if(!this.messagesCb) {
