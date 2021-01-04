@@ -57,7 +57,7 @@ export default function Chat({ userName, userLocation }) {
         });
     }, []);
 
-    const handleUserEnteringChat = useCallback((users) => {
+    const handleUsersChange = useCallback((users) => {
         setMessageRanges(messageRanges => {
             const messageRangesCopy = [...messageRanges];
 
@@ -96,8 +96,8 @@ export default function Chat({ userName, userLocation }) {
     }, [handleMessageCb]);
 
     useEffect(() => {
-        chatService.subscribeToChatUsersChange(handleUserEnteringChat);
-    }, [handleUserEnteringChat]);
+        chatService.subscribeToChatUsersChange(handleUsersChange);
+    }, [handleUsersChange]);
 
 	return (
         <div className="chat-w">
