@@ -5,7 +5,7 @@ const calculateEuclideanDT = (from, to) => {
     const latDiff = (from.lat - to.lat);
 
     return Math.sqrt(
-        lngDiff * lngDiff + latDiff + latDiff  
+        lngDiff * lngDiff + latDiff * latDiff  
     ) * 111.12;
 }
 
