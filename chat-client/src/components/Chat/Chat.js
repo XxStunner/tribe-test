@@ -38,6 +38,11 @@ export default function Chat({ userName, userLocation }) {
         setMessageRanges(messageRanges => {
             const messageRangesCopy = [...messageRanges];
             const messageRangeIndex = messageRangesCopy.findIndex(messageRange => messageRange.maximumDistance > message.distance);
+
+            if(messageRangeIndex === -1) {
+                messageRangeIndex = messageRanges.length - 1;
+            }
+
             const userIndex = messageRangesCopy[messageRangeIndex].users.findIndex(u => u.id === message.userId);
             const users = [...messageRangesCopy[messageRangeIndex].users];
             
@@ -58,6 +63,10 @@ export default function Chat({ userName, userLocation }) {
 
             users.forEach(user => {
                 const messageRangeIndex = messageRangesCopy.findIndex(messageRange => messageRange.maximumDistance > user.distance);
+
+                if(messageRangeIndex === -1) {
+                    messageRangeIndex = messageRanges.length - 1;
+                }
                 
                 messageRangesCopy[messageRangeIndex] = {
                     ...messageRangesCopy[messageRangeIndex],
