@@ -7,5 +7,5 @@ export default interface IUser {
         left: number,
         top: number
     },
-    message: IMessage
+    message: string
 }

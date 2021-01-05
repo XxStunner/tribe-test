@@ -48,7 +48,7 @@ io.on('connection', (socket:any) => {
         
         console.log(`Registered a message`, messageResponse);
 
-        users[userIndex].message = messageResponse;
+        users[userIndex].message = messageResponse.body;
 
         io.emit('newChatMessage', messageResponse)
     });
