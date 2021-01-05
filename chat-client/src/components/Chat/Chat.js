@@ -6,6 +6,7 @@ import './Chat.css';
 export default function Chat({ userName }) {
     const [userMessage, setUserMessage] = useState("");
     const [usersMap, setUsers] = useState({});
+    // eslint-disable-next-line
     const [currentPosition, setCurrentPosition] = useState({
         left: 0,
         top: 0
