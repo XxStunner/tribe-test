@@ -22,8 +22,11 @@ export default function Chat({ userName }) {
         const leftDiff = from.left - to.left;
         const topDiff = from.top - to.top;
         const distance = Math.sqrt(leftDiff * leftDiff + topDiff * topDiff);
-        const opacity = Math.abs((distance / 10) - 100);
-        return opacity < 0 ? 0 : (opacity < 100 ? opacity : 100);
+
+        let opacity = Math.floor(distance / 10);
+        opacity = opacity < 0 ? 0 : (opacity < 80 ? opacity : 100);
+        
+        return Math.abs(1 - opacity / 100);
     }
 
     const handleUserPositionChange = useCallback((user) => {
@@ -33,9 +36,12 @@ export default function Chat({ userName }) {
     
                 if(typeof _users[user.id] !== 'undefined') {
                     _users[user.id].position = user.position;
-                    _users[user.id].opacity = getUserOpacity(currentPosition, _users[user.id].position);
                 }
-    
+
+                for(let userId in _users) {
+                    _users[userId].opacity = getUserOpacity(currentPosition, _users[userId].position);
+                }
+
                 return _users;
             });
 
