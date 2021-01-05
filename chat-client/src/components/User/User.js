@@ -2,7 +2,7 @@ import './User.css';
 
 export default function User({ user }) {
     return (
-        <div className="message-w">
+        <div style={{ top: user.position.top, left: user.position.left }} className="message-w">
             <div className="message-avatar">
                 <img src="./images/tribe.jpg" alt={user.name}></img> {user.name}
             </div>
@@ -10,7 +10,7 @@ export default function User({ user }) {
                 <div 
                     className="message-body"
                     style={{ opacity: user.opacity }}
-                >{user.message.body}</div>
+                >{user.message}</div>
             }
         </div>
     );

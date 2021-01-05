@@ -3,30 +3,14 @@ import User from '../User/User';
 import chatService from '../../services/ChatService';
 import './Chat.css';
 
-export default function Chat({ userName, userLocation }) {
+export default function Chat({ userName }) {
     const [userMessage, setUserMessage] = useState("");
-    const [messageRanges, setMessageRanges] = useState([
-        {
-            maximumDistance: 250,
-            opacity: 1,
-            users: []
-        },
-        {
-            maximumDistance: 500,
-            opacity: .5,
-            users: []
-        },
-        {
-            maximumDistance: 1000,
-            opacity: .25,
-            users: []
-        },
-        {
-            maximumDistance: 2000,
-            opacity: 0,
-            users: []
-        },
-    ]);
+    const [usersMap, setUsers] = useState({});
+
+    const [currentPosition, setCurrentPosition] = useState({
+        left: 0,
+        top: 0
+    });
     
     const sendMessage = (e) => {
         e.preventDefault();
@@ -34,70 +18,66 @@ export default function Chat({ userName, userLocation }) {
         setUserMessage('');
     }
 
-    const handleMessageCb = useCallback((message) => {
-        setMessageRanges(messageRanges => {
-            const messageRangesCopy = [...messageRanges];
-            let messageRangeIndex = messageRangesCopy.findIndex(messageRange => messageRange.maximumDistance > message.distance);
+    const handleUserPositionChange = useCallback((user) => {
+        setUsers(users => {
+            const _users = {...users};
 
-            if(messageRangeIndex === -1) {
-                messageRangeIndex = messageRanges.length - 1;
+            if(typeof _users[user.id] !== 'undefined') {
+                _users[user.id].position = user.position;
             }
 
-            const userIndex = messageRangesCopy[messageRangeIndex].users.findIndex(u => u.id === message.userId);
-            const users = [...messageRangesCopy[messageRangeIndex].users];
-            
-            users[userIndex].message = message;
-
-            messageRangesCopy[messageRangeIndex] = {
-                ...messageRangesCopy[messageRangeIndex],
-                users: users
-            };
-
-            return messageRangesCopy;
+            return _users;
         });
-    }, []);
+    }, [setUsers]);
 
-    const handleUsersChange = useCallback((users) => {
-        setMessageRanges(messageRanges => {
-            const messageRangesCopy = [...messageRanges];
-
-            messageRangesCopy.forEach(messageRange => {
-                messageRange.users = [];
-            });
-
-            users.forEach(user => {
-                let messageRangeIndex = messageRangesCopy.findIndex(messageRange => messageRange.maximumDistance > user.distance);
-
-                if(messageRangeIndex === -1) {
-                    messageRangeIndex = messageRanges.length - 1;
-                }
-                
-                messageRangesCopy[messageRangeIndex] = {
-                    ...messageRangesCopy[messageRangeIndex],
-                    users: [{
-                        ...user,
-                        opacity: messageRangesCopy[messageRangeIndex].opacity,
-                    }, ...messageRangesCopy[messageRangeIndex].users].slice(0, 5)
-                };
-            });
-
-            return messageRangesCopy;
-        });
-    }, []);
+    const updateUsersList = useCallback((users) => {
+        const usersObj = {};
+        users.forEach(user => usersObj[user.id] = user);
+        setUsers(usersObj);
+    }, [setUsers]);
 
     useEffect(() => {
-        if(userName && userLocation.lat !== 0 && userLocation.lng !== 0) {
-            chatService.connectUser(userName, userLocation);
+        if(userName) {
+            chatService.connectUser(userName);
         }
-    }, [userName, userLocation]);
+    }, [userName]);
 
     useEffect(() => {
-        chatService.subscribeToChatMessages(handleMessageCb);
-    }, [handleMessageCb]);
+        const keyCodesPositionsMap = {
+            'arrowup': (currentPosition) => ({
+                ...currentPosition,
+                top: currentPosition.top - 10,
+            }),
+            'arrowdown': (currentPosition) => ({
+                ...currentPosition,
+                top: currentPosition.top + 10
+            }),
+            'arrowleft': (currentPosition) => ({
+                ...currentPosition,
+                left: currentPosition.left - 10
+            }),
+            'arrowright': (currentPosition) => ({
+                ...currentPosition,
+                left: currentPosition.left + 10
+            })
+        };
+
+        window.addEventListener('keydown', (event) => {
+            const eventCode = event.code.toLowerCase();
+            if(typeof keyCodesPositionsMap[eventCode] !== 'undefined') {
+                setCurrentPosition(currentPosition => {
+                    const newPosition = keyCodesPositionsMap[eventCode](currentPosition);
+                    chatService.updateCurentPosition(currentPosition);
+                    return newPosition;
+                });
+            }
+        });
+    }, []);
 
     useEffect(() => {
-        chatService.subscribeToChatUsersChange(handleUsersChange);
-    }, [handleUsersChange]);
+        chatService.subscribeToUserPositionChange(handleUserPositionChange);
+        chatService.subscribeToChatUsersChange(updateUsersList);
+    }, [handleUserPositionChange, updateUsersList]);
 
 	return (
         <div className="chat-w">
@@ -108,11 +88,7 @@ export default function Chat({ userName, userLocation }) {
                 <div className="chat-header-username">Welcome, {userName}</div>
             </div>
             <div className="chat-messages">
-                {messageRanges.map((messageRange, rangeIndex) => (
-                    <div key={rangeIndex} className="chat-messages-col">
-                        {messageRange.users.map(user => <User key={user.id} user={user} />)}
-                    </div>
-                ))}
+                {Object.keys(usersMap).map(userId => <User key={userId} user={usersMap[userId]} />)}
             </div>
             <form onSubmit={sendMessage} className="chat-input-w">
                 <input value={userMessage} type="text" onChange={e => setUserMessage(e.target.value)} minLength="3"></input>

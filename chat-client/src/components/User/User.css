@@ -9,6 +9,7 @@
 .message-w {
     display: flex;
     padding: 20px;
+    position: absolute;
 }
 
 .message-avatar {

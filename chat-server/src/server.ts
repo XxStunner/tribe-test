@@ -5,6 +5,7 @@ import IApplicationConfig from './interfaces/IApplicationConfig';
 import IMessageEntry from './interfaces/IMessageEntry';
 import IMessage from './interfaces/IMessage';
 import IUser from './interfaces/IUser';
+import IPosition from './interfaces/IPosition';
 
 const config:IApplicationConfig = configJson;
 const app = express();
@@ -25,15 +26,21 @@ io.on('connection', (socket:any) => {
 
     socket.on('addUserToChat', (user:IUser) => {
         console.log(`${user.name} connected to the chat`);
+
         userId = users.length + 1;
-
         user.id = userId;
-        
         userIndex = userId - 1;
-
         users[userIndex] = user;
 
         io.emit('updateUsersList', users);
+    });
+
+    socket.on('updateCurrentPosition', (position:IPosition) => {
+        users[userIndex].position = position;
+        io.emit('syncUserPosition', {
+            id: userId,
+            position: position
+        });
     });
 
     socket.on('sendMessage', (message:IMessageEntry) => {
@@ -51,7 +58,7 @@ io.on('connection', (socket:any) => {
 
         users = users.filter(user => user.id !== userId);
 
-        io.emit('updateUsersList', users);
+        io.emit('removeUserFromList', userId);
     });
 });
 

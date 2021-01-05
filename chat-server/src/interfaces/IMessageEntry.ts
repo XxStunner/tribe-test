@@ -1,7 +1,7 @@
-import ILocation from "./ILocation";
+import IPosition from "./IPosition";
 
 export default interface IMessageEntry {
     body: string,
-    location: ILocation,
+    position: IPosition,
     userName: string
 } 
