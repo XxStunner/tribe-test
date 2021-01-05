@@ -10,7 +10,7 @@ const chatService = {
         this.userName = userName;
         
         if(!this.socket) {
-            this.socket = socketIoClient('http://localhost:5000');
+            this.socket = socketIoClient('https://floating-headland-00562.herokuapp.com');
     
             this.socket.on('connect', () => {
                 console.log("user connected to server");
