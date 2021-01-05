@@ -58,7 +58,7 @@ io.on('connection', (socket:any) => {
 
         users = users.filter(user => user.id !== userId);
 
-        io.emit('removeUserFromList', userId);
+        io.emit('updateUsersList', users);
     });
 });
 
