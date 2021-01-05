@@ -6,7 +6,6 @@ import './Chat.css';
 export default function Chat({ userName }) {
     const [userMessage, setUserMessage] = useState("");
     const [usersMap, setUsers] = useState({});
-
     const [currentPosition, setCurrentPosition] = useState({
         left: 0,
         top: 0
@@ -18,23 +17,57 @@ export default function Chat({ userName }) {
         setUserMessage('');
     }
 
+    const getUserOpacity = (from, to) => {
+        const leftDiff = from.left - to.left;
+        const topDiff = from.top - to.top;
+        const distance = Math.sqrt(leftDiff * leftDiff + topDiff * topDiff);
+        const opacity = Math.abs((distance / 10) - 100);
+        return opacity < 0 ? 0 : (opacity < 100 ? opacity : 100);
+    }
+
     const handleUserPositionChange = useCallback((user) => {
+        setCurrentPosition(currentPosition => {
+            setUsers(users => {
+                const _users = {...users};
+    
+                if(typeof _users[user.id] !== 'undefined') {
+                    _users[user.id].position = user.position;
+                    _users[user.id].opacity = getUserOpacity(currentPosition, _users[user.id].position);
+                }
+    
+                return _users;
+            });
+
+            return currentPosition;
+        });
+    }, []);
+
+    const updateUsersList = useCallback((users) => {
+        setCurrentPosition(currentPosition => {
+            const usersObj = {};
+
+            users.forEach(user => {
+                user.opacity = getUserOpacity(currentPosition, user.position);
+                usersObj[user.id] = user;
+            });
+
+            setUsers(usersObj);
+
+            return currentPosition;
+        });
+    }, []);
+
+    const handleNewMessage = useCallback((message) => {
         setUsers(users => {
             const _users = {...users};
 
-            if(typeof _users[user.id] !== 'undefined') {
-                _users[user.id].position = user.position;
+            if(typeof _users[message.userId] !== 'undefined') {
+                _users[message.userId].message = message.body;
             }
 
             return _users;
         });
-    }, [setUsers]);
-
-    const updateUsersList = useCallback((users) => {
-        const usersObj = {};
-        users.forEach(user => usersObj[user.id] = user);
-        setUsers(usersObj);
-    }, [setUsers]);
+    }, []);
 
     useEffect(() => {
         if(userName) {
@@ -77,7 +110,8 @@ export default function Chat({ userName }) {
     useEffect(() => {
         chatService.subscribeToUserPositionChange(handleUserPositionChange);
         chatService.subscribeToChatUsersChange(updateUsersList);
-    }, [handleUserPositionChange, updateUsersList]);
+        chatService.subscribeToChatMessages(handleNewMessage);
+    }, [handleUserPositionChange, updateUsersList, handleNewMessage]);
 
 	return (
         <div className="chat-w">
